@@ -64,7 +64,8 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/cli": "3.0.0"
+    "@capacitor/cli": "3.0.0",
+    "@ionic/cli": "^6.16.1"
   },
   "description": "An Ionic project"
 }
