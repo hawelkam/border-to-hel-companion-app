@@ -3,12 +3,12 @@ import "firebase/auth";
 import "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCLSFGbg35lhr86FG5xbuwcfdG8IyRUqwc",
+  apiKey: process.env.REACT_APP_API_KEY,
   authDomain: "bth-companion-app.firebaseapp.com",
   projectId: "bth-companion-app",
   storageBucket: "bth-companion-app.appspot.com",
-  messagingSenderId: "309125109870",
-  appId: "1:309125109870:web:165b2cf49a45e67a3fee7f",
+  messagingSenderId: process.env.REACT_APP_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
 };
 
 firebase.initializeApp(firebaseConfig);
