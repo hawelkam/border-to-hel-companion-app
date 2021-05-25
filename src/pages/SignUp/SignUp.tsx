@@ -12,12 +12,34 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import firebaseTypes from "firebase";
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import { firebase } from "../../firebase/firebaseIndex";
 import "./SignUp.css";
 
 const SignUp: React.FC = () => {
+  const history = useHistory();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  const register = (
+    event: React.MouseEvent,
+    email: string,
+    password: string
+  ) => {
+    event.preventDefault();
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        history.push("/");
+      })
+      .catch((error: firebaseTypes.auth.Error) => {
+        setError(error.message);
+      });
+  };
 
   return (
     <IonPage>
@@ -38,7 +60,7 @@ const SignUp: React.FC = () => {
             <IonInput
               type="email"
               value={email}
-              placeholder="Enter you e-mail..."
+              placeholder="Enter your e-mail..."
               onIonChange={(e) => setEmail(e.detail.value!)}
             ></IonInput>
           </IonItem>
@@ -47,12 +69,24 @@ const SignUp: React.FC = () => {
             <IonInput
               type="password"
               value={password}
-              placeholder="Enter you password..."
+              placeholder="Enter your password..."
               onIonChange={(e) => setPassword(e.detail.value!)}
             ></IonInput>
           </IonItem>
+          {error && (
+            <IonItem>
+              <IonLabel color="danger">{error}</IonLabel>
+            </IonItem>
+          )}
           <IonItem>
-            <IonButton color="primary">Register</IonButton>
+            <IonButton
+              color="primary"
+              onClick={(event: React.MouseEvent) => {
+                register(event, email, password);
+              }}
+            >
+              Register
+            </IonButton>
           </IonItem>
         </IonList>
         <IonItem>

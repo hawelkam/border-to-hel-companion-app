@@ -1,6 +1,7 @@
 import { Redirect, Route } from "react-router-dom";
 import { IonApp, IonRouterOutlet } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
+import { useContext } from "react";
 import Home from "./pages/Home";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
@@ -37,42 +38,34 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 
+import { useAuth } from "./firebase/authProvider";
+import PrivateRoute from "./components/PrivateRoute";
+import Profile from "./pages/Profile/Profile";
+
 const App: React.FC = () => {
-  const user = null;
+  const { user, loading, logout } = useAuth();
+  console.log(user);
   return (
     <IonApp>
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
-            {user ? (
-              <>
-                <Route exact path="/legs">
-                  <Home />
-                </Route>
-                <Route exact path="/teams">
-                  <Home />
-                </Route>
-                <Route exact path="/your-team">
-                  <Home />
-                </Route>
-                <Route exact path="/profile">
-                  <Home />
-                </Route>
-                <Redirect to="/teams" />
-              </>
-            ) : (
-              <>
-                <Route exact path="/login">
-                  <Login />
-                </Route>
-                <Route exact path="/sign-up">
-                  <SignUp />
-                </Route>
-                <Route exact path="/">
-                  <Redirect to="/sign-up" />
-                </Route>
-              </>
-            )}
+            <PrivateRoute exact path="/legs" component={Home} />
+            <PrivateRoute exact path="/teams" component={Home} />
+            <PrivateRoute exact path="/your-team" component={Home} />
+            <PrivateRoute exact path="/profile" component={Profile} />
+            <Route exact path="/">
+              <Redirect to="/teams" />
+            </Route>
+            <Route exact path="/login">
+              {user ? <Redirect to="/" /> : <Login />}
+            </Route>
+            <Route exact path="/sign-up">
+              {user ? <Redirect to="/" /> : <SignUp />}
+            </Route>
+            <Route exact path="/">
+              {user ? <Redirect to="/teams" /> : <Redirect to="/login" />}
+            </Route>
           </IonRouterOutlet>
 
           <IonTabBar slot="bottom">
