@@ -41,6 +41,7 @@ import "./theme/variables.css";
 import { useAuth } from "./firebase/authProvider";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./pages/Profile/Profile";
+import Teams from "./pages/Teams/Teams";
 
 const App: React.FC = () => {
   const { user, loading, logout } = useAuth();
@@ -51,7 +52,7 @@ const App: React.FC = () => {
         <IonTabs>
           <IonRouterOutlet>
             <PrivateRoute exact path="/legs" component={Home} />
-            <PrivateRoute exact path="/teams" component={Home} />
+            <PrivateRoute exact path="/teams" component={Teams} />
             <PrivateRoute exact path="/your-team" component={Home} />
             <PrivateRoute exact path="/profile" component={Profile} />
             <Route exact path="/">

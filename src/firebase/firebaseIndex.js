@@ -19,4 +19,7 @@ const initFirebase = () => {
 
 initFirebase();
 
-export { firebase };
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+export { firebase, auth, db };
