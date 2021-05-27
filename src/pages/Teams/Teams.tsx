@@ -44,7 +44,7 @@ const Teams: React.FC = () => {
   };
 
   const checkIfUserInTeam = (team: Team): boolean =>
-    currentUser.user!.teamId === team.id;
+    user ? team.members.includes(user.uid) : false;
 
   return (
     <IonPage>
