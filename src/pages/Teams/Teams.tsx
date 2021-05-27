@@ -9,52 +9,35 @@ import {
   IonLabel,
   IonButton,
 } from "@ionic/react";
-import React, { useState, useEffect } from "react";
-import { db } from "../../firebase/firebaseIndex";
+import React, { useEffect } from "react";
 import { useAuth } from "../../firebase/authProvider";
-import firebase from "firebase";
+import { AppState } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { getTeams, joinTeam, leaveTeam } from "../../store/effects/Teams";
+import { Team } from "../../store/interfaces/Team";
+import CreateTeam from "./CreateTeam";
 
 const Teams: React.FC = () => {
-  const [teams, setTeams] = useState<firebase.firestore.DocumentData[]>([]);
-  const [hasTeam, setHasTeam] = useState<boolean>(false);
+  const dispatch = useDispatch();
   const { user } = useAuth();
 
   useEffect(() => {
-    db.collection("teams")
-      .get()
-      .then((querySnapshot) =>
-        querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }))
-      )
-      .then((data: firebase.firestore.DocumentData[]) => {
-        setTeams(data);
-        setHasTeam(data?.some((t) => t.members.includes(user?.uid)));
-      });
-  }, []);
+    dispatch(getTeams());
+  }, [dispatch]);
+  const teams = useSelector((state: AppState) => state.teams);
 
   const handleJoin = (event: React.MouseEvent, id: string): void => {
-    db.collection("teams")
-      .doc(id)
-      .update({
-        members: firebase.firestore.FieldValue.arrayUnion(user?.uid),
-      });
-
-    setHasTeam(true);
+    user && dispatch(joinTeam(id, user.uid));
   };
 
   const handleLeave = (event: React.MouseEvent, id: string): void => {
-    db.collection("teams")
-      .doc(id)
-      .update({
-        members: firebase.firestore.FieldValue.arrayRemove(user?.uid),
-      });
-    setHasTeam(false);
+    user && dispatch(leaveTeam(id, user.uid));
   };
 
-  const checkIfUserInTeam = (team: firebase.firestore.DocumentData): boolean =>
-    team.members.includes(user?.uid);
+  const checkIfUserInTeam = (team: Team): boolean =>
+    user ? team.members.includes(user.uid) : false;
+
+  console.log(teams);
 
   return (
     <IonPage>
@@ -70,13 +53,13 @@ const Teams: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonList>
-          {teams &&
-            teams.map((team) => (
+          {teams.teams &&
+            teams.teams.map((team) => (
               <IonItem key={team.id}>
                 <IonLabel>
                   <h2>{team.name}</h2>
                 </IonLabel>
-                {!hasTeam && (
+                {!checkIfUserInTeam(team) && (
                   <IonButton
                     color="success"
                     onClick={(event: React.MouseEvent) => {
@@ -98,6 +81,7 @@ const Teams: React.FC = () => {
                 )}
               </IonItem>
             ))}
+          <CreateTeam />
         </IonList>
       </IonContent>
     </IonPage>
