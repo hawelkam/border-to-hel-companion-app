@@ -24,7 +24,6 @@ const Login: React.FC = () => {
 
   const login = (event: React.MouseEvent, email: string, password: string) => {
     event.preventDefault();
-    console.log("IM IN");
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)

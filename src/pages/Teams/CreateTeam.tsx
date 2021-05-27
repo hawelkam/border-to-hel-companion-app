@@ -1,25 +1,24 @@
 import { IonItem, IonButton, IonInput } from "@ionic/react";
 import React, { useState } from "react";
-import { useAuth } from "../../firebase/authProvider";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createTeam } from "../../store/effects/Teams";
+import { AppState } from "../../store/store";
 
 const CreateTeam: React.FC = () => {
   const [newTeam, setNewTeam] = useState<string>("");
   const dispatch = useDispatch();
-  const { user } = useAuth();
+  const currentUser = useSelector((state: AppState) => state.user);
 
   const createNewTeam = (e: React.MouseEvent) => {
     e.preventDefault();
     if (newTeam !== "") {
-      user &&
-        dispatch(
-          createTeam({
-            name: newTeam,
-            members: [user.uid],
-            id: "",
-          })
-        );
+      dispatch(
+        createTeam({
+          name: newTeam,
+          members: [currentUser.user!.id!],
+          id: "",
+        })
+      );
       setNewTeam("");
     }
   };

@@ -45,7 +45,6 @@ import Teams from "./pages/Teams/Teams";
 
 const App: React.FC = () => {
   const { user, loading, logout } = useAuth();
-  console.log(user);
   return (
     <IonApp>
       <IonReactRouter>

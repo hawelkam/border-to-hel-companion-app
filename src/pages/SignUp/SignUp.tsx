@@ -17,12 +17,15 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { firebase } from "../../firebase/firebaseIndex";
 import "./SignUp.css";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../../store/effects/User";
 
 const SignUp: React.FC = () => {
   const history = useHistory();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const dispatch = useDispatch();
 
   const register = (
     event: React.MouseEvent,
@@ -33,7 +36,8 @@ const SignUp: React.FC = () => {
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(() => {
+      .then((data) => {
+        dispatch(registerUser(data.user!.uid));
         history.push("/");
       })
       .catch((error: firebaseTypes.auth.Error) => {

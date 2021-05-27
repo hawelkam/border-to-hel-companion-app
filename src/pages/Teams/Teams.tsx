@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getTeams, joinTeam, leaveTeam } from "../../store/effects/Teams";
 import { Team } from "../../store/interfaces/Team";
 import CreateTeam from "./CreateTeam";
+import { getUser, updateUserTeam } from "../../store/effects/User";
 
 const Teams: React.FC = () => {
   const dispatch = useDispatch();
@@ -23,21 +24,27 @@ const Teams: React.FC = () => {
 
   useEffect(() => {
     dispatch(getTeams());
-  }, [dispatch]);
+    user && dispatch(getUser(user.uid));
+  }, [dispatch, user]);
   const teams = useSelector((state: AppState) => state.teams);
+  const currentUser = useSelector((state: AppState) => state.user);
 
   const handleJoin = (event: React.MouseEvent, id: string): void => {
-    user && dispatch(joinTeam(id, user.uid));
+    if (currentUser.user) {
+      dispatch(joinTeam(id, currentUser.user.id!));
+      dispatch(updateUserTeam(id, currentUser.user.id!));
+    }
   };
 
   const handleLeave = (event: React.MouseEvent, id: string): void => {
-    user && dispatch(leaveTeam(id, user.uid));
+    if (currentUser.user) {
+      dispatch(leaveTeam(id, currentUser.user.id!));
+      dispatch(updateUserTeam(null, currentUser.user.id!));
+    }
   };
 
   const checkIfUserInTeam = (team: Team): boolean =>
-    user ? team.members.includes(user.uid) : false;
-
-  console.log(teams);
+    currentUser.user!.teamId === team.id;
 
   return (
     <IonPage>
@@ -58,6 +65,7 @@ const Teams: React.FC = () => {
               <IonItem key={team.id}>
                 <IonLabel>
                   <h2>{team.name}</h2>
+                  <p>{team.members.length} members</p>
                 </IonLabel>
                 {!checkIfUserInTeam(team) && (
                   <IonButton
