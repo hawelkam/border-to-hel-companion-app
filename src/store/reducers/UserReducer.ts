@@ -4,6 +4,7 @@ import {
   UserActionTypes,
   REGISTER_USER,
   UPDATE_USER_TEAM,
+  UPDATE_USER_PROFILE,
 } from "../types/UserTypes";
 
 const initialStateUser: UserStateType = {
@@ -33,6 +34,17 @@ export const userReducer = (
         user: {
           ...state.user,
           teamId: action.teamId,
+        },
+      };
+    case UPDATE_USER_PROFILE:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          firstName: action.profile.firstName,
+          lastName: action.profile.lastName,
+          nickname: action.profile.nickname,
+          avgPace: action.profile.avgPace,
         },
       };
     default:

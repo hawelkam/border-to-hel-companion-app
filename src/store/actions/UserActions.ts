@@ -1,10 +1,11 @@
 import {
   GET_USER,
   REGISTER_USER,
+  UPDATE_USER_PROFILE,
   UPDATE_USER_TEAM,
   UserActionTypes,
 } from "../types/UserTypes";
-import { User } from "../interfaces/User";
+import { User, UserProfile } from "../interfaces/User";
 
 export const getUserAction = (user: User): UserActionTypes => {
   return {
@@ -28,5 +29,14 @@ export const updateUserTeamAction = (
     type: UPDATE_USER_TEAM,
     teamId,
     userId,
+  };
+};
+
+export const updateUserProfileAction = (
+  profile: UserProfile
+): UserActionTypes => {
+  return {
+    type: UPDATE_USER_PROFILE,
+    profile,
   };
 };

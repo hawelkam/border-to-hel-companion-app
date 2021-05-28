@@ -1,13 +1,14 @@
 import {
   getUserAction,
   registerUserAction,
+  updateUserProfileAction,
   updateUserTeamAction,
 } from "../actions/UserActions";
 import { Dispatch } from "redux";
 import { UserActionTypes } from "../types/UserTypes";
 import { db } from "../../firebase/firebaseIndex";
 import firebase from "firebase";
-import { User } from "../interfaces/User";
+import { User, UserProfile } from "../interfaces/User";
 
 export const getUser = (userId: string) => {
   return function (dispatch: Dispatch<UserActionTypes>) {
@@ -26,6 +27,7 @@ export const getUser = (userId: string) => {
           nickname: data.nickname,
           legs: data.legs,
           teamId: data.teamId,
+          avgPace: data.avgPace,
         };
         dispatch(getUserAction(user));
         return user;
@@ -46,6 +48,22 @@ export const updateUserTeam = (teamId: string | null, userId: string) => {
   };
 };
 
+export const updateUserProfile = (profile: UserProfile) => {
+  return function (dispatch: Dispatch<UserActionTypes>) {
+    db.collection("users")
+      .doc(profile.id)
+      .update({
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        nickname: profile.nickname,
+        avgPace: profile.avgPace,
+      })
+      .then(() => {
+        dispatch(updateUserProfileAction(profile));
+      });
+  };
+};
+
 export const registerUser = (id: string) => {
   return function (dispatch: Dispatch<UserActionTypes>) {
     db.collection("users")
@@ -56,6 +74,7 @@ export const registerUser = (id: string) => {
         nickname: "",
         legs: [],
         teamId: "",
+        avgPace: "",
       })
       .then(() => {
         dispatch(registerUserAction(id));
